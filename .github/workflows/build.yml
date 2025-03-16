@@ -1,0 +1,91 @@
+#
+# build.yml
+# Copyright (c) 2025 Marius Greuel
+
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  runtimes:
+    strategy:
+      matrix:
+        include:
+          - { rid: win-x86, os: windows-latest, configuration: Release, platform: x86 }
+          - { rid: win-x64, os: windows-latest, configuration: Release, platform: x64 }
+          - { rid: win-arm64, os: windows-latest, configuration: Release, platform: ARM64 }
+          - { rid: linux-x64, os: ubuntu-22.04 }
+          - { rid: linux-arm64, os: ubuntu-22.04, packages: gcc-arm-linux-gnueabihf, cross-cc: arm-linux-gnueabihf-gcc }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install prerequisites (Linux)
+        if: ${{ contains(matrix.os, 'ubuntu') && matrix.packages }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ matrix.packages }}
+      - name: Setup MSBuild (Windows)
+        if: ${{ contains(matrix.os, 'windows') }}
+        uses: microsoft/setup-msbuild@v2
+      - name: Build native libraries (Windows)
+        if: ${{ contains(matrix.os, 'windows') }}
+        working-directory: tree-sitter-native
+        run: msbuild tree-sitter-native.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
+      - name: Build native libraries (Linux)
+        if: ${{ contains(matrix.os, 'ubuntu') && !matrix.cross-cc }}
+        working-directory: tree-sitter-native
+        run: make RID=${{ matrix.rid }}
+      - name: Build cross platform libraries (Linux)
+        if: ${{ contains(matrix.os, 'ubuntu') && matrix.cross-cc }}
+        working-directory: tree-sitter-native
+        run: make RID=${{ matrix.rid }} CC=${{ matrix.cross-cc }}
+      - name: Archive build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtimes-${{ matrix.rid }}
+          path: build
+  tests:
+    strategy:
+      matrix:
+        include:
+          - { os: windows-latest }
+          - { os: ubuntu-22.04 }
+    runs-on: ${{ matrix.os }}
+    needs: runtimes
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download native tree-sitter libraries
+        uses: actions/download-artifact@v4
+        with:
+          path: build
+          merge-multiple: true
+      - name: Run tests
+        working-directory: tests
+        run: dotnet test
+  nuget:
+    runs-on: windows-latest
+    needs: tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download native tree-sitter libraries
+        uses: actions/download-artifact@v4
+        with:
+          path: build
+          merge-multiple: true
+      - name: Build NuGet package
+        working-directory: src
+        run: dotnet pack
+      - name: Archive NuGet package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: src/bin/Release/*.nupkg

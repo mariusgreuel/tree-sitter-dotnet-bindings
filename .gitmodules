@@ -1,0 +1,87 @@
+[submodule "tree-sitter-native/tree-sitter"]
+	path = tree-sitter-native/tree-sitter
+	url = https://github.com/tree-sitter/tree-sitter.git
+[submodule "tree-sitter-native/tree-sitter-agda"]
+	path = tree-sitter-native/tree-sitter-agda
+	url = https://github.com/tree-sitter/tree-sitter-agda.git
+[submodule "tree-sitter-native/tree-sitter-bash"]
+	path = tree-sitter-native/tree-sitter-bash
+	url = https://github.com/tree-sitter/tree-sitter-bash.git
+[submodule "tree-sitter-native/tree-sitter-c"]
+	path = tree-sitter-native/tree-sitter-c
+	url = https://github.com/tree-sitter/tree-sitter-c.git
+[submodule "tree-sitter-native/tree-sitter-cpp"]
+	path = tree-sitter-native/tree-sitter-cpp
+	url = https://github.com/tree-sitter/tree-sitter-cpp.git
+[submodule "tree-sitter-native/tree-sitter-c-sharp"]
+	path = tree-sitter-native/tree-sitter-c-sharp
+	url = https://github.com/tree-sitter/tree-sitter-c-sharp.git
+[submodule "tree-sitter-native/tree-sitter-css"]
+	path = tree-sitter-native/tree-sitter-css
+	url = https://github.com/tree-sitter/tree-sitter-css.git
+[submodule "tree-sitter-native/tree-sitter-embedded-template"]
+	path = tree-sitter-native/tree-sitter-embedded-template
+	url = https://github.com/tree-sitter/tree-sitter-embedded-template.git
+[submodule "tree-sitter-native/tree-sitter-go"]
+	path = tree-sitter-native/tree-sitter-go
+	url = https://github.com/tree-sitter/tree-sitter-go.git
+[submodule "tree-sitter-native/tree-sitter-haskell"]
+	path = tree-sitter-native/tree-sitter-haskell
+	url = https://github.com/tree-sitter/tree-sitter-haskell.git
+[submodule "tree-sitter-native/tree-sitter-html"]
+	path = tree-sitter-native/tree-sitter-html
+	url = https://github.com/tree-sitter/tree-sitter-html.git
+[submodule "tree-sitter-native/tree-sitter-java"]
+	path = tree-sitter-native/tree-sitter-java
+	url = https://github.com/tree-sitter/tree-sitter-java.git
+[submodule "tree-sitter-native/tree-sitter-javascript"]
+	path = tree-sitter-native/tree-sitter-javascript
+	url = https://github.com/tree-sitter/tree-sitter-javascript.git
+[submodule "tree-sitter-native/tree-sitter-jsdoc"]
+	path = tree-sitter-native/tree-sitter-jsdoc
+	url = https://github.com/tree-sitter/tree-sitter-jsdoc.git
+[submodule "tree-sitter-native/tree-sitter-json"]
+	path = tree-sitter-native/tree-sitter-json
+	url = https://github.com/tree-sitter/tree-sitter-json.git
+[submodule "tree-sitter-native/tree-sitter-julia"]
+	path = tree-sitter-native/tree-sitter-julia
+	url = https://github.com/tree-sitter/tree-sitter-julia.git
+[submodule "tree-sitter-native/tree-sitter-ocaml"]
+	path = tree-sitter-native/tree-sitter-ocaml
+	url = https://github.com/tree-sitter/tree-sitter-ocaml.git
+[submodule "tree-sitter-native/tree-sitter-php"]
+	path = tree-sitter-native/tree-sitter-php
+	url = https://github.com/tree-sitter/tree-sitter-php.git
+[submodule "tree-sitter-native/tree-sitter-python"]
+	path = tree-sitter-native/tree-sitter-python
+	url = https://github.com/tree-sitter/tree-sitter-python.git
+[submodule "tree-sitter-native/tree-sitter-ql"]
+	path = tree-sitter-native/tree-sitter-ql
+	url = https://github.com/tree-sitter/tree-sitter-ql.git
+[submodule "tree-sitter-native/tree-sitter-razor"]
+	path = tree-sitter-native/tree-sitter-razor
+	url = https://github.com/tree-sitter/tree-sitter-razor.git
+[submodule "tree-sitter-native/tree-sitter-ruby"]
+	path = tree-sitter-native/tree-sitter-ruby
+	url = https://github.com/tree-sitter/tree-sitter-ruby.git
+[submodule "tree-sitter-native/tree-sitter-rust"]
+	path = tree-sitter-native/tree-sitter-rust
+	url = https://github.com/tree-sitter/tree-sitter-rust.git
+[submodule "tree-sitter-native/tree-sitter-scala"]
+	path = tree-sitter-native/tree-sitter-scala
+	url = https://github.com/tree-sitter/tree-sitter-scala.git
+[submodule "tree-sitter-native/tree-sitter-swift"]
+	path = tree-sitter-native/tree-sitter-swift
+	url = https://github.com/tree-sitter/tree-sitter-swift.git
+[submodule "tree-sitter-native/tree-sitter-toml"]
+	path = tree-sitter-native/tree-sitter-toml
+	url = https://github.com/tree-sitter/tree-sitter-toml.git
+[submodule "tree-sitter-native/tree-sitter-tsq"]
+	path = tree-sitter-native/tree-sitter-tsq
+	url = https://github.com/tree-sitter/tree-sitter-tsq.git
+[submodule "tree-sitter-native/tree-sitter-typescript"]
+	path = tree-sitter-native/tree-sitter-typescript
+	url = https://github.com/tree-sitter/tree-sitter-typescript.git
+[submodule "tree-sitter-native/tree-sitter-verilog"]
+	path = tree-sitter-native/tree-sitter-verilog
+	url = https://github.com/tree-sitter/tree-sitter-verilog.git
