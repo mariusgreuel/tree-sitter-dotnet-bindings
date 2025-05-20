@@ -21,7 +21,7 @@ internal static class Native
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void TSLogCallback(IntPtr payload, LogType log_type, [MarshalAs(UnmanagedType.LPStr)] string buffer);
+    internal delegate void TSLogCallback(IntPtr payload, LogType logType, [MarshalAs(UnmanagedType.LPStr)] string buffer);
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct TSPoint

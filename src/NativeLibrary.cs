@@ -101,7 +101,7 @@ internal static class NativeLibrary
             if (library == IntPtr.Zero && throwOnError)
             {
                 var innerException = new Win32Exception();
-                throw new DllNotFoundException($"Unable to load dynamic link library '{libraryName}' or one of its dependencies", innerException);
+                throw new DllNotFoundException($"Unable to load dynamic link library '{libraryName}' or one of its dependencies.", innerException);
             }
 
             return library;
@@ -128,7 +128,8 @@ internal static class NativeLibrary
             var library = Libdl.dlopen(libraryName, Libdl.RTLD_NOW);
             if (library == IntPtr.Zero && throwOnError)
             {
-                throw new DllNotFoundException($"Unable to load shared library '{libraryName}' or one of its dependencies");
+                var error = Marshal.PtrToStringAnsi(Libdl.dlerror());
+                throw new DllNotFoundException($"Unable to load shared library '{libraryName}' or one of its dependencies: {error}");
             }
 
             return library;

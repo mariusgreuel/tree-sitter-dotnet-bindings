@@ -22,9 +22,14 @@ public class Language : IDisposable, IEquatable<Language>, ICloneable
     /// Initializes a new instance of the <see cref="Language"/> class.
     /// </summary>
     /// <param name="self">A pointer to a raw language object.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="self"/> is <see cref="IntPtr.Zero"/>.</exception>
     public Language(IntPtr self)
     {
-        Debug.Assert(self != IntPtr.Zero);
+        if (self == IntPtr.Zero)
+        {
+            throw new ArgumentException("Pointer to the language object cannot be null.", nameof(self));
+        }
+
         _self = self;
     }
 
@@ -32,6 +37,7 @@ public class Language : IDisposable, IEquatable<Language>, ICloneable
     /// Initializes a new instance of the <see cref="Language"/> class.
     /// </summary>
     /// <param name="id">The language identifier.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is null or empty.</exception>
     /// <remarks>
     /// The language identifier determines the library and function to load.
     /// The library is determined by prefixing the identifier with "tree-sitter-".
@@ -268,6 +274,11 @@ public class Language : IDisposable, IEquatable<Language>, ICloneable
 
     static string GetLibraryNameFromId(string id)
     {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            throw new ArgumentException("Language ID cannot be null or empty.", nameof(id));
+        }
+
         return "tree-sitter-" + id.ToLowerInvariant();
     }
 

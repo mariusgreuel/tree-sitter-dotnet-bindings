@@ -29,8 +29,8 @@ public struct Point : IEquatable<Point>
     /// <summary>
     /// Initializes a new instance of the <see cref="Point"/> struct.
     /// </summary>
-    /// <param name="row"></param>
-    /// <param name="column"></param>
+    /// <param name="row">The zero-based row number.</param>
+    /// <param name="column">The zero-based column number.</param>
     public Point(int row, int column)
     {
         _self.row = IntToUInt(row);

@@ -10,7 +10,7 @@ using static TreeSitter.Native;
 namespace TreeSitter;
 
 /// <summary>
-/// Represents a query object used to find patters in syntax nodes.
+/// Represents a query object used to find patterns in syntax nodes.
 /// </summary>
 public class Query : IDisposable, IEquatable<Query>
 {
@@ -19,13 +19,24 @@ public class Query : IDisposable, IEquatable<Query>
     /// </summary>
     /// <param name="language">The language to be used.</param>
     /// <param name="source">The query string containing one or more S-expression patterns.</param>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="language"/> or <paramref name="source"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the query cannot be created due to an error.</exception>
     /// <remarks>
-    /// The query is associated with a particular language, and can
+    /// The query is associated with a particular language and can
     /// only be run on syntax nodes parsed with that language.
     /// </remarks>
     public Query(Language language, string source)
     {
+        if (language == null)
+        {
+            throw new ArgumentNullException(nameof(language), "Language cannot be null.");
+        }
+
+        if (string.IsNullOrWhiteSpace(source))
+        {
+            throw new ArgumentNullException(nameof(source), "Query source cannot be null or empty.");
+        }
+
         _self = ts_query_new(language.Self, ToUTF8(source, out var length), length, out var errorOffset, out var errorType);
         if (_self == IntPtr.Zero)
         {

@@ -7,9 +7,23 @@
 
 namespace TreeSitter;
 
+/// <summary>
+/// Represents the types of steps in a query predicate.
+/// </summary>
 internal enum QueryPredicateStepType
 {
+    /// <summary>
+    /// Indicates the end of a predicate.
+    /// </summary>
     Done,
+
+    /// <summary>
+    /// Represents a capture step in a predicate.
+    /// </summary>
     Capture,
+
+    /// <summary>
+    /// Represents a string step in a predicate.
+    /// </summary>
     String,
 }

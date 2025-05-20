@@ -15,6 +15,11 @@ namespace TreeSitter;
 [DebuggerDisplay("{Name,nq}")]
 public class LookaheadSymbol
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LookaheadSymbol"/> class.
+    /// </summary>
+    /// <param name="id">The symbol's identifier.</param>
+    /// <param name="name">The symbol's name.</param>
     internal LookaheadSymbol(ushort id, string name)
     {
         Id = id;

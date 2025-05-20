@@ -8,8 +8,8 @@
 namespace TreeSitter;
 
 /// <summary>
-/// Callback for log messages.
+/// Represents a callback for log messages.
 /// </summary>
-/// <param name="logType">The message type.</param>
-/// <param name="message">The message string.</param>
+/// <param name="logType">The type of the log message.</param>
+/// <param name="message">The log message string.</param>
 public delegate void Logger(LogType logType, string message);

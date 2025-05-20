@@ -15,5 +15,5 @@ public abstract class PredicateStep
     /// <summary>
     /// Gets the type of the predicate step.
     /// </summary>
-    public virtual string Type => "";
+    public abstract string Type { get; }
 }

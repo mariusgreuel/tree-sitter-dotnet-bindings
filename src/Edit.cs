@@ -19,8 +19,13 @@ public class Edit
     /// </summary>
     public Edit()
     {
+        _self = new();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Edit"/> class with a native <see cref="TSInputEdit"/> structure.
+    /// </summary>
+    /// <param name="self">The native <see cref="TSInputEdit"/> structure.</param>
     internal Edit(TSInputEdit self)
     {
         _self = self;

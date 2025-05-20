@@ -17,18 +17,24 @@ public class Parser : IDisposable, IEquatable<Parser>
     /// <summary>
     /// Initializes a new instance of the <see cref="Parser"/> class.
     /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the parser cannot be created.</exception>
     public Parser()
     {
         _self = ts_parser_new();
+        if (_self == IntPtr.Zero)
+        {
+            throw new InvalidOperationException("Failed to create a new parser instance.");
+        }
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Parser"/> class.
     /// </summary>
     /// <param name="language">The language used for parsing.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="language"/> is <see langword="null"/>.</exception>
     public Parser(Language language) : this()
     {
-        Language = language;
+        Language = language ?? throw new ArgumentNullException(nameof(language), "Language cannot be null.");
     }
 
     /// <summary>
@@ -43,26 +49,19 @@ public class Parser : IDisposable, IEquatable<Parser>
     /// </summary>
     public Logger? Logger
     {
-        get
-        {
-            return _logger;
-        }
-
+        get => _logger;
         set
         {
             _logger = value;
 
             if (_logger != null)
             {
-                var ts_logger = new TSLogger
+                var tsLogger = new TSLogger
                 {
                     payload = IntPtr.Zero,
-                    log = delegate (IntPtr payload, LogType logType, string message)
-                    {
-                        _logger(logType, message);
-                    }
+                    log = (payload, logType, message) => _logger(logType, message)
                 };
-                ts_parser_set_logger(Self, ts_logger);
+                ts_parser_set_logger(Self, tsLogger);
             }
         }
     }
@@ -92,16 +91,16 @@ public class Parser : IDisposable, IEquatable<Parser>
     /// </summary>
     public IReadOnlyList<Range> IncludedRanges
     {
-        get
-        {
-            return new RangeCollection(ts_parser_included_ranges(Self, out var count), count, false);
-        }
-
+        get => new RangeCollection(ts_parser_included_ranges(Self, out var count), count, false);
         set
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value), "Included ranges cannot be null.");
+            }
+
             var ranges = value.Select(range => range._self).ToArray();
-            bool success = ts_parser_set_included_ranges(Self, ranges, (uint)ranges.Length);
-            if (!success)
+            if (!ts_parser_set_included_ranges(Self, ranges, (uint)ranges.Length))
             {
                 throw new InvalidOperationException("The given ranges must be ordered from earliest to latest in the document, and they must not overlap.");
             }
@@ -113,8 +112,14 @@ public class Parser : IDisposable, IEquatable<Parser>
     /// </summary>
     /// <param name="source">The source code.</param>
     /// <returns>The syntax tree.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is <see langword="null"/>.</exception>
     public Tree? Parse(string source)
     {
+        if (source == null)
+        {
+            throw new ArgumentNullException(nameof(source), "Source code cannot be null.");
+        }
+
         return Parse(source, null);
     }
 
@@ -124,6 +129,7 @@ public class Parser : IDisposable, IEquatable<Parser>
     /// <param name="source">The source code.</param>
     /// <param name="oldTree">The previous syntax tree.</param>
     /// <returns>The syntax tree.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// If you are parsing the document for the first time, pass <see langword="null"/> for
     /// <paramref name="oldTree"/>. Otherwise, if you have already parsed an earlier
@@ -135,7 +141,12 @@ public class Parser : IDisposable, IEquatable<Parser>
     /// </remarks>
     public Tree? Parse(string source, Tree? oldTree)
     {
-        var oldTreePtr = oldTree != null ? oldTree.Self : IntPtr.Zero;
+        if (source == null)
+        {
+            throw new ArgumentNullException(nameof(source), "Source code cannot be null.");
+        }
+
+        var oldTreePtr = oldTree?.Self ?? IntPtr.Zero;
         var tree = ts_parser_parse_string_encoding(Self, oldTreePtr, source, (uint)source.Length * 2, InputEncoding.UTF16LE);
         return tree != IntPtr.Zero ? new Tree(tree, source) : null;
     }
@@ -170,7 +181,7 @@ public class Parser : IDisposable, IEquatable<Parser>
     /// <inheritdoc/>
     public override bool Equals(object? other)
     {
-        return other is Parser query && Equals(query);
+        return other is Parser parser && Equals(parser);
     }
 
     /// <inheritdoc/>

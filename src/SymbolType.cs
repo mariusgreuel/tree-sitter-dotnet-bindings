@@ -18,7 +18,7 @@ public enum SymbolType
     Regular,
 
     /// <summary>
-    /// A anonymous symbol.
+    /// An anonymous symbol.
     /// </summary>
     Anonymous,
 
@@ -28,7 +28,7 @@ public enum SymbolType
     Supertype,
 
     /// <summary>
-    /// A auxiliary symbol.
+    /// An auxiliary symbol.
     /// </summary>
     Auxiliary,
 }

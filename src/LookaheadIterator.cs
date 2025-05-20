@@ -16,8 +16,8 @@ namespace TreeSitter;
 /// </summary>
 /// <remarks>
 /// Lookahead iterators can be useful to generate suggestions and improve syntax
-/// error diagnostics.To get symbols valid in an ERROR node, use the lookahead
-/// iterator on its first leaf node state.For `MISSING` nodes, a lookahead
+/// error diagnostics. To get symbols valid in an ERROR node, use the lookahead
+/// iterator on its first leaf node state. For `MISSING` nodes, a lookahead
 /// iterator created on the previous non-extra leaf node may be appropriate.
 /// </remarks>
 public class LookaheadIterator : IDisposable, IEquatable<LookaheadIterator>
@@ -27,9 +27,15 @@ public class LookaheadIterator : IDisposable, IEquatable<LookaheadIterator>
     /// </summary>
     /// <param name="language">The language to be used.</param>
     /// <param name="state">The parse state.</param>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="language"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the parser state is invalid for the language.</exception>
     public LookaheadIterator(Language language, ushort state)
     {
+        if (language == null)
+        {
+            throw new ArgumentNullException(nameof(language), "Language cannot be null.");
+        }
+
         _self = ts_lookahead_iterator_new(language.Self, state);
         if (_self == IntPtr.Zero)
         {
@@ -74,8 +80,14 @@ public class LookaheadIterator : IDisposable, IEquatable<LookaheadIterator>
     /// <returns>
     /// <see langword="true"/> if the iterator was reset to the given state; otherwise <see langword="false"/>.
     /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="language"/> is <see langword="null"/>.</exception>
     public bool Reset(Language language, ushort state)
     {
+        if (language == null)
+        {
+            throw new ArgumentNullException(nameof(language), "Language cannot be null.");
+        }
+
         return ts_lookahead_iterator_reset(Self, language.Self, state);
     }
 

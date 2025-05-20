@@ -14,6 +14,11 @@ namespace TreeSitter;
 /// </summary>
 public class Tree : IDisposable, ICloneable
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Tree"/> class.
+    /// </summary>
+    /// <param name="self">The native pointer to the tree.</param>
+    /// <param name="source">The source code associated with the tree.</param>
     internal Tree(IntPtr self, string source)
     {
         _self = self;
@@ -72,7 +77,7 @@ public class Tree : IDisposable, ICloneable
     /// </summary>
     /// <param name="index">The index to the source code.</param>
     /// <param name="offsetExtent">The offset extent.</param>
-    /// <returns></returns>
+    /// <returns>The root node with the offset applied.</returns>
     public Node GetRootNodeWithIndex(int index, Point offsetExtent)
     {
         return new(ts_tree_root_node_with_offset(Self, IndexToByte(index), offsetExtent._self), this);

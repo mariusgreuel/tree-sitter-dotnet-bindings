@@ -16,6 +16,11 @@ namespace TreeSitter;
 /// </summary>
 public class QueryPattern
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QueryPattern"/> class.
+    /// </summary>
+    /// <param name="query">The query associated with the pattern.</param>
+    /// <param name="index">The index of the pattern in the query.</param>
     internal QueryPattern(Query query, uint index)
     {
         _query = query;
@@ -62,12 +67,12 @@ public class QueryPattern
 
     internal bool MatchesPredicates(IEnumerable<QueryCapture> captures)
     {
-        return _textPredicates.TrueForAll((predicate) => predicate.Predicate(captures));
+        return _textPredicates.TrueForAll(predicate => predicate.Predicate(captures));
     }
 
     void ParsePredicateSteps()
     {
-        List<PredicateStep> steps = new();
+        List<PredicateStep> steps = [];
 
         var predicateSteps = ts_query_predicates_for_pattern(_query.Self, _index, out var count);
         for (int i = 0; i < (int)count; i++)
@@ -136,7 +141,7 @@ public class QueryPattern
     {
         if (steps.Count != 3)
         {
-            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected 2, got ${steps.Count - 1}");
+            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected 2, got {steps.Count - 1}");
         }
 
         if (steps[1] is not CapturePredicateStep capture1)
@@ -150,7 +155,7 @@ public class QueryPattern
 
         if (steps[2] is CapturePredicateStep capture2)
         {
-            _textPredicates.Add(new((IEnumerable<QueryCapture> captures) =>
+            _textPredicates.Add(new(captures =>
             {
                 var nodes1 = FindCaptureNodesByName(captures, capture1.Name);
                 var nodes2 = FindCaptureNodesByName(captures, capture2.Name);
@@ -167,23 +172,23 @@ public class QueryPattern
         }
         else if (steps[2] is StringPredicateStep string2)
         {
-            _textPredicates.Add(new((IEnumerable<QueryCapture> captures) =>
+            _textPredicates.Add(new(captures =>
             {
                 var nodes = FindCaptureNodesByName(captures, capture1.Name);
 
                 if (matchAll)
                 {
-                    return nodes.TrueForAll((node) => Equals(node.Text, string2.Value));
+                    return nodes.TrueForAll(node => Equals(node.Text, string2.Value));
                 }
                 else
                 {
-                    return nodes.TrueForSome((node) => Equals(node.Text, string2.Value));
+                    return nodes.TrueForSome(node => Equals(node.Text, string2.Value));
                 }
             }));
         }
         else
         {
-            throw new InvalidOperationException($"Unexpected step type.");
+            throw new InvalidOperationException("Unexpected step type.");
         }
     }
 
@@ -191,7 +196,7 @@ public class QueryPattern
     {
         if (steps.Count != 3)
         {
-            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected 2, got ${steps.Count - 1}");
+            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected 2, got {steps.Count - 1}");
         }
 
         if (steps[1] is not CapturePredicateStep capture1)
@@ -209,17 +214,17 @@ public class QueryPattern
         var regex = new Regex(string2.Value);
         bool IsMatch(string text) => isPositive ? regex.IsMatch(text) : !regex.IsMatch(text);
 
-        _textPredicates.Add(new((IEnumerable<QueryCapture> captures) =>
+        _textPredicates.Add(new(captures =>
         {
             var nodes = FindCaptureNodesByName(captures, capture1.Name);
 
             if (matchAll)
             {
-                return nodes.TrueForAll((node) => IsMatch(node.Text));
+                return nodes.TrueForAll(node => IsMatch(node.Text));
             }
             else
             {
-                return nodes.TrueForSome((node) => IsMatch(node.Text));
+                return nodes.TrueForSome(node => IsMatch(node.Text));
             }
         }));
     }
@@ -228,7 +233,7 @@ public class QueryPattern
     {
         if (steps.Count < 2)
         {
-            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected at least 1, got ${steps.Count - 1}");
+            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected at least 1, got {steps.Count - 1}");
         }
 
         if (steps[1] is not CapturePredicateStep capture1)
@@ -237,14 +242,14 @@ public class QueryPattern
         }
 
         var stringSteps = steps.GetRange(2, steps.Count - 2);
-        if (!stringSteps.TrueForAll((step) => step is StringPredicateStep))
+        if (!stringSteps.TrueForAll(step => step is StringPredicateStep))
         {
             throw new InvalidOperationException($"Arguments to '#{type}' predicate must be strings.");
         }
 
         var isPositive = type == "any-of?";
 
-        _textPredicates.Add(new((IEnumerable<QueryCapture> captures) =>
+        _textPredicates.Add(new(captures =>
         {
             var nodes = FindCaptureNodesByName(captures, capture1.Name);
             if (nodes.Count == 0)
@@ -252,7 +257,7 @@ public class QueryPattern
                 return !isPositive;
             }
 
-            return nodes.TrueForAll((node) => stringSteps.TrueForSome((step) => ((StringPredicateStep)step).Value == node.Text) == isPositive);
+            return nodes.TrueForAll(node => stringSteps.TrueForSome(step => ((StringPredicateStep)step).Value == node.Text) == isPositive);
         }));
     }
 
@@ -260,7 +265,7 @@ public class QueryPattern
     {
         if (steps.Count < 2 || steps.Count > 3)
         {
-            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected 1 or 2, got ${steps.Count - 1}");
+            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected 1 or 2, got {steps.Count - 1}");
         }
 
         if (steps[1] is not StringPredicateStep string1)
@@ -288,7 +293,7 @@ public class QueryPattern
     {
         if (steps.Count < 2 || steps.Count > 3)
         {
-            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected 1 or 2, got ${steps.Count - 1}");
+            throw new InvalidOperationException($"Wrong number of arguments to '#{type}' predicate. Expected 1 or 2, got {steps.Count - 1}");
         }
 
         if (steps[1] is not StringPredicateStep string1)
@@ -312,7 +317,7 @@ public class QueryPattern
 
     static List<Node> FindCaptureNodesByName(IEnumerable<QueryCapture> captures, string name)
     {
-        List<Node> nodes = new();
+        List<Node> nodes = [];
 
         foreach (var capture in captures)
         {
@@ -327,9 +332,9 @@ public class QueryPattern
 
     readonly Query _query;
     readonly uint _index;
-    internal readonly List<TextPredicate> _textPredicates = new();
-    internal readonly List<UserPredicate> _userPredicates = new();
-    internal readonly Dictionary<string, string?> _assertedProperties = new();
-    internal readonly Dictionary<string, string?> _refutedProperties = new();
-    internal readonly Dictionary<string, string?> _setProperties = new();
+    internal readonly List<TextPredicate> _textPredicates = [];
+    internal readonly List<UserPredicate> _userPredicates = [];
+    internal readonly Dictionary<string, string?> _assertedProperties = [];
+    internal readonly Dictionary<string, string?> _refutedProperties = [];
+    internal readonly Dictionary<string, string?> _setProperties = [];
 }

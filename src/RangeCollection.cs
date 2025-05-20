@@ -11,8 +11,17 @@ using static TreeSitter.Native;
 
 namespace TreeSitter;
 
+/// <summary>
+/// Represents a collection of ranges in a multi-line text document.
+/// </summary>
 internal class RangeCollection : IDisposable, IReadOnlyList<Range>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RangeCollection"/> class.
+    /// </summary>
+    /// <param name="ranges">Pointer to the unmanaged array of ranges.</param>
+    /// <param name="count">The number of ranges in the collection.</param>
+    /// <param name="dispose">Indicates whether the unmanaged memory should be freed when disposed.</param>
     public RangeCollection(IntPtr ranges, uint count, bool dispose)
     {
         _ranges = ranges;

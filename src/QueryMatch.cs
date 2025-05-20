@@ -14,6 +14,12 @@ namespace TreeSitter;
 /// </summary>
 public class QueryMatch
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QueryMatch"/> class.
+    /// </summary>
+    /// <param name="queryMatch">The native query match.</param>
+    /// <param name="query">The query associated with the match.</param>
+    /// <param name="tree">The syntax tree containing the match.</param>
     internal QueryMatch(TSQueryMatch queryMatch, Query query, Tree tree)
     {
         Id = queryMatch.id;
@@ -48,22 +54,22 @@ public class QueryMatch
     public IReadOnlyList<UserPredicate> UserPredicates => _userPredicates;
 
     /// <summary>
-    /// Get the properties for predicates declared with the operator 'is?'.
+    /// Gets the properties for predicates declared with the operator 'is?'.
     /// </summary>
     public IReadOnlyDictionary<string, string?>? AssertedProperties => _assertedProperties;
 
     /// <summary>
-    /// Get the properties for predicates declared with the operator 'is-not?'.
+    /// Gets the properties for predicates declared with the operator 'is-not?'.
     /// </summary>
     public IReadOnlyDictionary<string, string?>? RefutedProperties => _refutedProperties;
 
     /// <summary>
-    /// Get the properties for predicates declared with the operator 'set!'.
+    /// Gets the properties for predicates declared with the operator 'set!'.
     /// </summary>
     public IReadOnlyDictionary<string, string?>? SetProperties => _setProperties;
 
     readonly List<QueryCapture> _captures;
-    internal List<UserPredicate> _userPredicates = new();
+    internal List<UserPredicate> _userPredicates = [];
     internal Dictionary<string, string?>? _assertedProperties;
     internal Dictionary<string, string?>? _refutedProperties;
     internal Dictionary<string, string?>? _setProperties;

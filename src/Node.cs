@@ -64,7 +64,7 @@ public class Node : IEquatable<Node>
     /// <summary>
     /// Gets the node's type.
     /// </summary>
-    public string Type => MarshalString(ts_node_type(_self))!;
+    public string Type => MarshalString(ts_node_type(_self)) ?? string.Empty;
 
     /// <summary>
     /// Gets the node's type as a numerical ID.
@@ -74,7 +74,7 @@ public class Node : IEquatable<Node>
     /// <summary>
     /// Gets the node's type as it appears in the grammar ignoring aliases.
     /// </summary>
-    public string GrammarName => MarshalString(ts_node_grammar_type(_self))!;
+    public string GrammarName => MarshalString(ts_node_grammar_type(_self)) ?? string.Empty;
 
     /// <summary>
     /// Gets the node's type as a numerical ID as it appears in the grammar, ignoring aliases.
@@ -228,7 +228,7 @@ public class Node : IEquatable<Node>
 
             try
             {
-                return MarshalString(str)!;
+                return MarshalString(str) ?? string.Empty;
             }
             finally
             {
@@ -309,7 +309,7 @@ public class Node : IEquatable<Node>
     /// <returns>A collection of child nodes with the given field ID.</returns>
     public IReadOnlyList<Node> GetChildrenForField(ushort id)
     {
-        List<Node> children = new();
+        List<Node> children = [];
 
         var cursor = Walk();
         if (cursor.GotoFirstChild())
@@ -468,9 +468,20 @@ public class Node : IEquatable<Node>
     /// <param name="left">The first node.</param>
     /// <param name="right">The second node.</param>
     /// <returns><see langword="true"/> if the nodes are equal; otherwise <see langword="false"/>.</returns>
-    public static bool operator ==(Node left, Node right)
+    public static bool operator ==(Node? left, Node? right)
     {
-        return left.Equals(right);
+        if (left is null && right is null)
+        {
+            return true;
+        }
+        else if (left is null || right is null)
+        {
+            return false;
+        }
+        else
+        {
+            return left.Equals(right);
+        }
     }
 
     /// <summary>
@@ -479,7 +490,7 @@ public class Node : IEquatable<Node>
     /// <param name="left">The first node.</param>
     /// <param name="right">The second node.</param>
     /// <returns><see langword="true"/> if the nodes are not equal; otherwise <see langword="false"/>.</returns>
-    public static bool operator !=(Node left, Node right)
+    public static bool operator !=(Node? left, Node? right)
     {
         return !(left == right);
     }
@@ -489,26 +500,21 @@ public class Node : IEquatable<Node>
         return !ts_node_is_null(self) ? new Node(self, _tree) : null;
     }
 
-    class ChildCollection : IReadOnlyList<Node>
+    class ChildCollection(Node node) : IReadOnlyList<Node>
     {
-        public ChildCollection(Node node)
-        {
-            _node = node;
-        }
-
-        public int Count => (int)ts_node_child_count(_node._self);
+        public int Count => (int)ts_node_child_count(node._self);
 
         public Node this[int index]
         {
             get
             {
-                var child = ts_node_child(_node._self, (uint)index);
+                var child = ts_node_child(node._self, (uint)index);
                 if (ts_node_is_null(child))
                 {
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
 
-                return new(child, _node._tree);
+                return new(child, node._tree);
             }
         }
 
@@ -524,30 +530,23 @@ public class Node : IEquatable<Node>
         {
             return GetEnumerator();
         }
-
-        readonly Node _node;
     }
 
-    class NamedChildCollection : IReadOnlyList<Node>
+    class NamedChildCollection(Node node) : IReadOnlyList<Node>
     {
-        public NamedChildCollection(Node node)
-        {
-            _node = node;
-        }
-
-        public int Count => (int)ts_node_named_child_count(_node._self);
+        public int Count => (int)ts_node_named_child_count(node._self);
 
         public Node this[int index]
         {
             get
             {
-                var child = ts_node_named_child(_node._self, (uint)index);
+                var child = ts_node_named_child(node._self, (uint)index);
                 if (ts_node_is_null(child))
                 {
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
 
-                return new(child, _node._tree);
+                return new(child, node._tree);
             }
         }
 
@@ -563,20 +562,13 @@ public class Node : IEquatable<Node>
         {
             return GetEnumerator();
         }
-
-        readonly Node _node;
     }
 
-    class FieldCollection : IReadOnlyList<KeyValuePair<string?, Node>>
+    class FieldCollection(Node node) : IReadOnlyList<KeyValuePair<string?, Node>>
     {
-        public FieldCollection(Node node)
-        {
-            _node = node;
-        }
+        public int Count => (int)ts_node_child_count(node._self);
 
-        public int Count => (int)ts_node_child_count(_node._self);
-
-        public KeyValuePair<string?, Node> this[int index] => new(MarshalString(ts_node_field_name_for_child(_node._self, (uint)index)), _node.Children[index]);
+        public KeyValuePair<string?, Node> this[int index] => new(MarshalString(ts_node_field_name_for_child(node._self, (uint)index)), node.Children[index]);
 
         public IEnumerator<KeyValuePair<string?, Node>> GetEnumerator()
         {
@@ -590,8 +582,6 @@ public class Node : IEquatable<Node>
         {
             return GetEnumerator();
         }
-
-        readonly Node _node;
     }
 
     readonly TSNode _self;

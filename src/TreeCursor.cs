@@ -41,7 +41,7 @@ public class TreeCursor : IDisposable, ICloneable
     ~TreeCursor() => Dispose(false);
 
     ref TSTreeCursor GetSelf()
-    { 
+    {
         if (_isDisposed != 0)
             throw new ObjectDisposedException(GetType().FullName);
 
