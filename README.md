@@ -51,9 +51,9 @@ Found function: two
 
 ## Installation
 
-To install the .NET bindings for tree-sitter, add the NuGet package **TreeSitter** to your .NET project.
+To install the .NET bindings for tree-sitter, add the NuGet package [TreeSitter.DotNet](https://www.nuget.org/packages/TreeSitter.DotNet) to your .NET project.
 
-The NuGet package **TreeSitter** consists of three components:
+The NuGet package **TreeSitter.DotNet** consists of three components:
 
 1. The tree-sitter .NET bindings (TreeSitter.dll)
 1. The native tree-sitter parsing library (tree-sitter.[dll/so])
