@@ -20,6 +20,8 @@ public class Parser : IDisposable, IEquatable<Parser>
     /// <exception cref="InvalidOperationException">Thrown when the parser cannot be created.</exception>
     public Parser()
     {
+        PreloadTreesitterLibrary();
+
         _self = ts_parser_new();
         if (_self == IntPtr.Zero)
         {

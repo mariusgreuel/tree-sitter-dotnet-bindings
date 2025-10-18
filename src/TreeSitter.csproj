@@ -29,6 +29,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Include="TreeSitter.DotNet.targets">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
     <None Include="..\build\runtimes\win-x64\native\*" Condition="'$(OS)' == 'Windows_NT'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

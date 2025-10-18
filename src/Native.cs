@@ -559,6 +559,16 @@ internal static class Native
         s_ts_current_free(ptr);
     }
 
+    internal static void PreloadTreesitterLibrary()
+    {
+        if (IsDotNetFrameworkRuntime())
+        {
+            // When running on .NET Framework, we need to preload the tree-sitter library
+            // via our custom NativeLibrary, as the DllImport is not aware of the runtimes folder.
+            ts_free(IntPtr.Zero);
+        }
+    }
+
     internal static string? MarshalString(IntPtr ptr)
     {
         return Marshal.PtrToStringAnsi(ptr);
@@ -609,6 +619,11 @@ internal static class Native
         var handle = NativeLibrary.Load(Libraries.TreeSitter, Assembly.GetExecutingAssembly(), null);
         var ts_current_free = NativeLibrary.GetExport(handle, "ts_current_free");
         return Marshal.GetDelegateForFunctionPointer<FreeFunction>(Marshal.ReadIntPtr(ts_current_free));
+    }
+
+    static bool IsDotNetFrameworkRuntime()
+    {
+        return RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
     }
 
     static readonly FreeFunction s_ts_current_free = GetFreeFunction();

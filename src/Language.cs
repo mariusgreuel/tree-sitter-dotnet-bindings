@@ -25,6 +25,8 @@ public class Language : IDisposable, IEquatable<Language>, ICloneable
     /// <exception cref="ArgumentException">Thrown when <paramref name="self"/> is <see cref="IntPtr.Zero"/>.</exception>
     public Language(IntPtr self)
     {
+        PreloadTreesitterLibrary();
+
         if (self == IntPtr.Zero)
         {
             throw new ArgumentException("Pointer to the language object cannot be null.", nameof(self));
