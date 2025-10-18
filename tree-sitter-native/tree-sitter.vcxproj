@@ -182,6 +182,7 @@
     <ClCompile Include="tree-sitter\lib\src\lexer.c" />
     <ClCompile Include="tree-sitter\lib\src\node.c" />
     <ClCompile Include="tree-sitter\lib\src\parser.c" />
+    <ClCompile Include="tree-sitter\lib\src\point.c" />
     <ClCompile Include="tree-sitter\lib\src\query.c" />
     <ClCompile Include="tree-sitter\lib\src\stack.c" />
     <ClCompile Include="tree-sitter\lib\src\subtree.c" />

@@ -217,9 +217,9 @@ public class ParserTests
             "(function_definition " +
             "name: (identifier) " +
             "parameters: (parameters) " +
-            "body: (block (expression_statement (call " +
+            "body: (block (call " +
             "function: (identifier) " +
-            "arguments: (argument_list))))))))",
+            "arguments: (argument_list)))))))",
             tree.RootNode.Expression);
     }
 

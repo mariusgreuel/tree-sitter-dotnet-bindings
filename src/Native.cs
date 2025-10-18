@@ -519,9 +519,6 @@ internal static class Native
     internal static extern SymbolType ts_language_symbol_type(IntPtr self, ushort symbol);
 
     [DllImport(Libraries.TreeSitter, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern uint ts_language_version(IntPtr self);
-
-    [DllImport(Libraries.TreeSitter, CallingConvention = CallingConvention.Cdecl)]
     internal static extern uint ts_language_abi_version(IntPtr self);
 
     [DllImport(Libraries.TreeSitter, CallingConvention = CallingConvention.Cdecl)]

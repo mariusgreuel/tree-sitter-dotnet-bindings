@@ -15,7 +15,7 @@ public class LanguageTests
     public void ReturnsTheNameAndVersionOfTheLanguage()
     {
         //Assert.AreEqual("javascript", JavaScript.Name);
-        Assert.AreEqual(14u, _javaScript.AbiVersion);
+        Assert.AreEqual(15u, _javaScript.AbiVersion);
     }
 
     [TestMethod]
