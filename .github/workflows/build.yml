@@ -1,6 +1,7 @@
 #
 # build.yml
 # Copyright (c) 2025 Marius Greuel
+#
 
 name: Build
 
@@ -22,7 +23,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: true
       - name: Install prerequisites (Linux)
@@ -61,9 +62,9 @@ jobs:
     needs: runtimes
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Download native tree-sitter libraries
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: build
           merge-multiple: true
@@ -75,9 +76,9 @@ jobs:
     needs: tests
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Download native tree-sitter libraries
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: build
           merge-multiple: true
@@ -89,3 +90,20 @@ jobs:
         with:
           name: nuget-package
           path: src/bin/Release/*.nupkg
+  release:
+    runs-on: windows-latest
+    needs: nuget
+    if: github.ref_type == 'tag'
+    permissions:
+      contents: write
+    steps:
+      - name: Download NuGet package
+        uses: actions/download-artifact@v5
+        with:
+          name: nuget-package
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TreeSitter.DotNet.*.nupkg
+      - name: Publish
+        run: dotnet nuget push TreeSitter.DotNet.*.nupkg --api-key ${{ secrets.NUGET_APIKEY }} --source https://api.nuget.org/v3/index.json
