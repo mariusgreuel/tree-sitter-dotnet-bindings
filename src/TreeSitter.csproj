@@ -8,6 +8,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <EnablePackageValidation>true</EnablePackageValidation>
     <PackageId>TreeSitter.DotNet</PackageId>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>
     <Version>1.0.1</Version>
     <Title>.NET bindings for tree-sitter</Title>
     <Description>.NET bindings for the tree-sitter parsing library</Description>
