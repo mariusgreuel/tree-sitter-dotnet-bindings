@@ -604,6 +604,7 @@ internal static class Native
         return value >= 0 && value < int.MaxValue ? (uint)value * 2 : uint.MaxValue;
     }
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void FreeFunction(IntPtr ptr);
 
     static FreeFunction GetFreeFunction()
