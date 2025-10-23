@@ -29,7 +29,7 @@ internal static class NativeLibrary
 
     static class Libdl
     {
-        const string Library = "libdl.so.2";
+        const string Library = "libdl";
 
         public const int RTLD_NOW = 2;
 
@@ -63,6 +63,10 @@ internal static class NativeLibrary
             {
                 return new LinuxLoader();
             }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return new OSXLoader();
+            }
             else
             {
                 throw new PlatformNotSupportedException();
@@ -85,6 +89,10 @@ internal static class NativeLibrary
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return $"linux-{architecture}";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return $"osx-{architecture}";
             }
             else
             {
@@ -144,6 +152,32 @@ internal static class NativeLibrary
             yield return "lib" + name;
             yield return name + ".so";
             yield return "lib" + name + ".so";
+        }
+    }
+
+    class OSXLoader : Loader
+    {
+        public override IntPtr Load(string libraryName, int flags, bool throwOnError)
+        {
+            var library = Libdl.dlopen(libraryName, Libdl.RTLD_NOW);
+            if (library == IntPtr.Zero && throwOnError)
+            {
+                var error = Marshal.PtrToStringAnsi(Libdl.dlerror());
+                throw new DllNotFoundException($"Unable to load shared library '{libraryName}' or one of its dependencies: {error}");
+            }
+
+            return library;
+        }
+
+        public override void Free(IntPtr handle) => Libdl.dlclose(handle);
+        public override IntPtr GetExport(IntPtr handle, string name) => Libdl.dlsym(handle, name);
+
+        public override IEnumerable<string> GetLibraryNameVariations(string name)
+        {
+            yield return name;
+            yield return "lib" + name;
+            yield return name + ".dylib";
+            yield return "lib" + name + ".dylib";
         }
     }
 

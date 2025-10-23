@@ -20,6 +20,8 @@ jobs:
           - { rid: win-arm64, os: windows-latest, configuration: Release, platform: ARM64 }
           - { rid: linux-x64, os: ubuntu-22.04 }
           - { rid: linux-arm64, os: ubuntu-22.04, packages: gcc-arm-linux-gnueabihf, cross-cc: arm-linux-gnueabihf-gcc }
+          - { rid: osx-x64, os: macos-15-intel, configuration: Release }
+          - { rid: osx-arm64, os: macos-latest, configuration: Release }
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -38,8 +40,8 @@ jobs:
         if: ${{ contains(matrix.os, 'windows') }}
         working-directory: tree-sitter-native
         run: msbuild tree-sitter-native.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
-      - name: Build native libraries (Linux)
-        if: ${{ contains(matrix.os, 'ubuntu') && !matrix.cross-cc }}
+      - name: Build native libraries (Linux or macOS)
+        if: ${{ (contains(matrix.os, 'ubuntu') || contains(matrix.os, 'macos')) && !matrix.cross-cc }}
         working-directory: tree-sitter-native
         run: make RID=${{ matrix.rid }}
       - name: Build cross platform libraries (Linux)
@@ -57,7 +59,8 @@ jobs:
       matrix:
         include:
           - { os: windows-latest }
-          - { os: ubuntu-22.04 }
+          - { os: ubuntu-latest }
+          - { os: macos-latest }
     runs-on: ${{ matrix.os }}
     needs: runtimes
     steps:
