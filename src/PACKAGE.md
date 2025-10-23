@@ -7,8 +7,9 @@ Also includes the native tree-sitter parsing library and a complete set of nativ
 
 * .NET bindings for the tree-sitter parsing library.
 * Includes native libraries for the tree-sitter parsing library and language grammars.
-* Supports 28+ language grammars.
-* Supports both Windows and Linux.
+* Includes 28+ language grammars.
+* Work with all .NET languages such as C#, F#, and VB.NET.
+* Work with Windows (x86, x64, arm64), Linux (x64, arm64), and macOS (x64, arm64).
 * Support for [predicates queries](https://github.com/tree-sitter/tree-sitter/issues/4075).
 * Passes the [WebAssembly bindings](https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_web) test suite.
 

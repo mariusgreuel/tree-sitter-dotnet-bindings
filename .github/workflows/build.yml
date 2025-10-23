@@ -20,6 +20,8 @@ jobs:
           - { rid: win-arm64, os: windows-latest, configuration: Release, platform: ARM64 }
           - { rid: linux-x64, os: ubuntu-22.04 }
           - { rid: linux-arm64, os: ubuntu-22.04, packages: gcc-arm-linux-gnueabihf, cross-cc: arm-linux-gnueabihf-gcc }
+          - { rid: osx-x64, os: macos-15-intel, configuration: Release }
+          - { rid: osx-arm64, os: macos-latest, configuration: Release }
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -38,8 +40,8 @@ jobs:
         if: ${{ contains(matrix.os, 'windows') }}
         working-directory: tree-sitter-native
         run: msbuild tree-sitter-native.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
-      - name: Build native libraries (Linux)
-        if: ${{ contains(matrix.os, 'ubuntu') && !matrix.cross-cc }}
+      - name: Build native libraries (Linux or macOS)
+        if: ${{ (contains(matrix.os, 'ubuntu') || contains(matrix.os, 'macos')) && !matrix.cross-cc }}
         working-directory: tree-sitter-native
         run: make RID=${{ matrix.rid }}
       - name: Build cross platform libraries (Linux)
@@ -56,24 +58,37 @@ jobs:
     strategy:
       matrix:
         include:
-          - { os: windows-latest }
-          - { os: ubuntu-22.04 }
+          - { rid: win-x86, os: windows-latest }
+          - { rid: win-x64, os: windows-latest }
+          - { rid: win-arm64, os: windows-11-arm }
+          - { rid: linux-x64, os: ubuntu-latest }
+          - { rid: osx-x64, os: macos-15-intel }
+          - { rid: osx-arm64, os: macos-latest }
     runs-on: ${{ matrix.os }}
     needs: runtimes
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
       - name: Download native tree-sitter libraries
         uses: actions/download-artifact@v5
         with:
+          name: runtimes-${{ matrix.rid }}
           path: build
-          merge-multiple: true
-      - name: Run tests
+      - name: Run tests (normal mode)
+        if: runner.debug != '1'
         working-directory: tests
-        run: dotnet test
+        run: dotnet test --runtime ${{ matrix.rid }}
+      - name: Run tests (debug mode)
+        if: runner.debug == '1'
+        working-directory: tests
+        run: dotnet test --runtime ${{ matrix.rid }} --logger:"console;verbosity=detailed" --environment TREESITTER_DEBUG_LOADER=1
   nuget:
     runs-on: windows-latest
     needs: tests
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -94,6 +109,8 @@ jobs:
     runs-on: windows-latest
     needs: nuget
     if: github.ref_type == 'tag'
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
     permissions:
       contents: write
     steps:

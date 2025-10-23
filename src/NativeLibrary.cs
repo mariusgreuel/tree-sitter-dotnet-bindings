@@ -29,6 +29,25 @@ internal static class NativeLibrary
 
     static class Libdl
     {
+        const string Library = "libdl";
+
+        public const int RTLD_NOW = 2;
+
+        [DllImport(Library)]
+        public static extern IntPtr dlopen(string libraryName, int flags);
+
+        [DllImport(Library)]
+        public static extern int dlclose(IntPtr handle);
+
+        [DllImport(Library)]
+        public static extern IntPtr dlsym(IntPtr handle, string name);
+
+        [DllImport(Library)]
+        public static extern IntPtr dlerror();
+    }
+
+    static class Libdl2
+    {
         const string Library = "libdl.so.2";
 
         public const int RTLD_NOW = 2;
@@ -63,6 +82,10 @@ internal static class NativeLibrary
             {
                 return new LinuxLoader();
             }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return new OSXLoader();
+            }
             else
             {
                 throw new PlatformNotSupportedException();
@@ -86,17 +109,33 @@ internal static class NativeLibrary
             {
                 return $"linux-{architecture}";
             }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return $"osx-{architecture}";
+            }
             else
             {
                 throw new PlatformNotSupportedException();
             }
         }
+
+        protected void DebugLoad(string libraryName)
+        {
+            if (_printDebugInfo)
+            {
+                Console.WriteLine($"[TREESITTER_DEBUG_LOADER] Loading library: {libraryName}");
+            }
+        }
+
+        readonly bool _printDebugInfo = Environment.GetEnvironmentVariable("TREESITTER_DEBUG_LOADER") == "1";
     }
 
     class WindowsLoader : Loader
     {
         public override IntPtr Load(string libraryName, int flags, bool throwOnError)
         {
+            DebugLoad(libraryName);
+
             var library = Kernel32.LoadLibraryEx(libraryName, IntPtr.Zero, flags);
             if (library == IntPtr.Zero && throwOnError)
             {
@@ -112,12 +151,12 @@ internal static class NativeLibrary
 
         public override IEnumerable<string> GetLibraryNameVariations(string name)
         {
-            yield return name;
-
             if (!name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
             {
                 yield return name + ".dll";
             }
+
+            yield return name;
         }
     }
 
@@ -125,6 +164,40 @@ internal static class NativeLibrary
     {
         public override IntPtr Load(string libraryName, int flags, bool throwOnError)
         {
+            DebugLoad(libraryName);
+
+            var library = Libdl2.dlopen(libraryName, Libdl2.RTLD_NOW);
+            if (library == IntPtr.Zero && throwOnError)
+            {
+                var error = Marshal.PtrToStringAnsi(Libdl2.dlerror());
+                throw new DllNotFoundException($"Unable to load shared library '{libraryName}' or one of its dependencies: {error}");
+            }
+
+            return library;
+        }
+
+        public override void Free(IntPtr handle) => Libdl2.dlclose(handle);
+        public override IntPtr GetExport(IntPtr handle, string name) => Libdl2.dlsym(handle, name);
+
+        public override IEnumerable<string> GetLibraryNameVariations(string name)
+        {
+            if (!name.EndsWith(".so", StringComparison.InvariantCultureIgnoreCase))
+            {
+                yield return "lib" + name + ".so";
+                yield return name + ".so";
+            }
+
+            yield return "lib" + name;
+            yield return name;
+        }
+    }
+
+    class OSXLoader : Loader
+    {
+        public override IntPtr Load(string libraryName, int flags, bool throwOnError)
+        {
+            DebugLoad(libraryName);
+
             var library = Libdl.dlopen(libraryName, Libdl.RTLD_NOW);
             if (library == IntPtr.Zero && throwOnError)
             {
@@ -140,10 +213,14 @@ internal static class NativeLibrary
 
         public override IEnumerable<string> GetLibraryNameVariations(string name)
         {
-            yield return name;
+            if (!name.EndsWith(".dylib", StringComparison.InvariantCultureIgnoreCase))
+            {
+                yield return "lib" + name + ".dylib";
+                yield return name + ".dylib";
+            }
+
             yield return "lib" + name;
-            yield return name + ".so";
-            yield return "lib" + name + ".so";
+            yield return name;
         }
     }
 
@@ -227,7 +304,8 @@ internal static class NativeLibrary
             }
         }
 
-        return s_loader.Load(libraryName, flags, throwOnError);
+        var preferredLibraryName = s_loader.GetLibraryNameVariations(Path.GetFileName(libraryName)).First();
+        return s_loader.Load(preferredLibraryName, flags, throwOnError);
     }
 
     static readonly Loader s_loader = Loader.GetPlatformDependentLoader();

@@ -7,8 +7,9 @@ Also includes the native tree-sitter parsing library and a complete set of nativ
 
 * .NET bindings for the tree-sitter parsing library.
 * Includes native libraries for the tree-sitter parsing library and language grammars.
-* Supports 28+ language grammars.
-* Supports both Windows and Linux.
+* Includes 28+ language grammars.
+* Work with all .NET languages such as C#, F#, and VB.NET.
+* Work with Windows (x86, x64, arm64), Linux (x64, arm64), and macOS (x64, arm64).
 * Support for [predicates queries](https://github.com/tree-sitter/tree-sitter/issues/4075).
 * Passes the [WebAssembly bindings](https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_web) test suite.
 
@@ -70,6 +71,8 @@ The NuGet package included pre-built native libraries for the following runtime 
 - win-arm64
 - linux-x64
 - linux-arm64
+- osx-x64
+- osx-arm64
 
 and the following projects:
 
@@ -125,7 +128,7 @@ open a **Developer Command Prompt for VS 2022** and run the following commands:
 cd tree-sitter-native
 msbuild tree-sitter-native.sln /p:Configuration=Release /p:Platform=x64
 cd ..\src
-dotnet build TreeSitter.csproj
+dotnet build --runtime win-x64 --configuration Release
 ```
 
 The native tree-sitter libraries will be placed in the folder `/build/runtimes/win-x64/native`
@@ -140,7 +143,7 @@ open a shell and run the following commands:
 cd tree-sitter-native
 make
 cd ../src
-dotnet build TreeSitter.csproj
+dotnet build --runtime linux-x64 --configuration Release
 ```
 
 The native tree-sitter libraries will be built in the folder `/build/runtimes/linux-x64/native`
