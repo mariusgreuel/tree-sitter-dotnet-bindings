@@ -161,7 +161,6 @@ public class LanguageTests
             "JSDoc",
             "JSON",
             "Julia",
-            "OCaml",
             "PHP",
             "Python",
             "QL",
@@ -176,6 +175,7 @@ public class LanguageTests
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             languageNames.AddRange([
+                "OCaml",
                 "Swift",
                 "TOML",
                 "TSQ",
