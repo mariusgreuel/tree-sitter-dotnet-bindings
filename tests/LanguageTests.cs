@@ -138,5 +138,47 @@ public class LanguageTests
         }
     }
 
+    [TestMethod]
+    public void LoadsLanguagesCorrectly()
+    {
+        string[] languageNames = [
+            "Agda",
+            "bash",
+            "C",
+            "C++",
+            "cpp",
+            "C#",
+            "c-sharp",
+            "CSS",
+            "embedded-template",
+            "Go",
+            "Haskell",
+            "HTML",
+            "Java",
+            "JavaScript",
+            "JSDoc",
+            "JSON",
+            "Julia",
+            "OCaml",
+            "PHP",
+            "Python",
+            "QL",
+            "Ruby",
+            "Rust",
+            "Scala",
+            "Swift",
+            "TOML",
+            "TSQ",
+            "TSX",
+            "TypeScript",
+            "Verilog",
+        ];
+
+        foreach (var languageName in languageNames)
+        {
+            using Language language = new(languageName);
+        }
+    }
+
     readonly Language _javaScript = new("JavaScript");
 }

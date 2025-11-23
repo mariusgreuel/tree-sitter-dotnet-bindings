@@ -281,12 +281,22 @@ public class Language : IDisposable, IEquatable<Language>, ICloneable
             throw new ArgumentException("Language ID cannot be null or empty.", nameof(id));
         }
 
-        return "tree-sitter-" + id.ToLowerInvariant();
+        return "tree-sitter-" + MapLanguageId(id);
     }
 
     static string GetFunctionNameFromId(string id)
     {
-        return "tree_sitter_" + id.ToLowerInvariant();
+        return "tree_sitter_" + MapLanguageId(id).Replace('-', '_');
+    }
+
+    static string MapLanguageId(string id)
+    {
+        return id switch
+        {
+            "C++" => "cpp",
+            "C#" => "c-sharp",
+            _ => id.ToLowerInvariant(),
+        };
     }
 
     static IntPtr LoadLanguage(string library, string function)
