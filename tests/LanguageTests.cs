@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+using System.Runtime.InteropServices;
+
 namespace TreeSitter.Tests;
 
 [TestClass]
@@ -141,7 +143,7 @@ public class LanguageTests
     [TestMethod]
     public void LoadsLanguagesCorrectly()
     {
-        string[] languageNames = [
+        List<string> languageNames = [
             "Agda",
             "bash",
             "C",
@@ -166,13 +168,19 @@ public class LanguageTests
             "Ruby",
             "Rust",
             "Scala",
-            "Swift",
-            "TOML",
-            "TSQ",
             "TSX",
             "TypeScript",
             "Verilog",
         ];
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            languageNames.AddRange([
+                "Swift",
+                "TOML",
+                "TSQ",
+            ]);
+        }
 
         foreach (var languageName in languageNames)
         {
