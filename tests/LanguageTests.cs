@@ -164,6 +164,7 @@ public class LanguageTests
             "PHP",
             "Python",
             "QL",
+            "Razor",
             "Ruby",
             "Rust",
             "Scala",
