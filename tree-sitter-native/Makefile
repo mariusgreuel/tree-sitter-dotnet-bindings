@@ -9,7 +9,7 @@ else
 endif
 
 # Missing Makefile for the languages swift, toml, tsq
-LANGUAGES = agda bash c cpp c-sharp css embedded-template go haskell html java javascript jsdoc json julia php python ql ruby rust scala typescript tsx verilog
+LANGUAGES = agda bash c cpp c-sharp css embedded-template go haskell html java javascript jsdoc json julia php python ql razor ruby rust scala typescript tsx verilog
 ifeq ($(UNAME_S),Linux)
     # ocaml is broken on macOS
     LANGUAGES += ocaml ocaml-type
