@@ -1,7 +1,7 @@
 RID ?= linux-x64
 BUILD_DIR = ../build/runtimes/$(RID)/native
 # Missing Makefile -> razor swift toml tsq
-LANGUAGES = agda bash c cpp c-sharp css embedded-template go haskell html java javascript jsdoc json julia ocaml php python ql ruby rust scala typescript tsx verilog
+LANGUAGES = agda bash c cpp c-sharp css embedded-template go haskell html java javascript jsdoc json julia ocaml ocaml-type php python ql ruby rust scala typescript tsx verilog
 PROJECTS = tree-sitter $(patsubst %,tree-sitter-%,$(LANGUAGES))
 LIBRARIES = $(patsubst %,$(BUILD_DIR)/lib%.so,$(PROJECTS))
 
@@ -13,6 +13,10 @@ $(BUILD_DIR):
 $(BUILD_DIR)/libtree-sitter-ocaml.so:
 	make -C tree-sitter-ocaml
 	cp tree-sitter-ocaml/grammars/ocaml/libtree-sitter-ocaml.so $@
+
+$(BUILD_DIR)/libtree-sitter-ocaml-type.so:
+	make -C tree-sitter-ocaml
+	cp tree-sitter-ocaml/grammars/type/libtree-sitter-ocaml-type.so $@
 
 $(BUILD_DIR)/libtree-sitter-php.so:
 	make -C tree-sitter-php
