@@ -1,19 +1,20 @@
 RID ?= linux-x64
 BUILD_DIR = ../build/runtimes/$(RID)/native
 
-ifeq ($(OS),Windows_NT)
-    make_lib = $(addsuffix .dll,$1)
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+    make_lib = $(addsuffix .dylib,$1)
 else
-    UNAME_S := $(shell uname -s)
-    ifeq ($(UNAME_S),Darwin)
-        make_lib = $(addsuffix .dylib,$1)
-    else
-        make_lib = $(addsuffix .so,$1)
-    endif
+    make_lib = $(addsuffix .so,$1)
 endif
 
-# Missing Makefile or broken for Linux/OSX -> ocaml razor swift toml tsq
+# Missing Makefile for the languages swift, toml, tsq
 LANGUAGES = agda bash c cpp c-sharp css embedded-template go haskell html java javascript jsdoc json julia php python ql ruby rust scala typescript tsx verilog
+ifeq ($(UNAME_S),Linux)
+    # ocaml is broken on macOS
+    LANGUAGES += ocaml ocaml-type
+endif
+
 PROJECTS = tree-sitter $(patsubst %,tree-sitter-%,$(LANGUAGES))
 LIBRARIES = $(patsubst %,$(BUILD_DIR)/$(call make_lib,lib%),$(PROJECTS))
 
