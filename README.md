@@ -9,7 +9,7 @@ Also includes the native tree-sitter parsing library and a complete set of nativ
 * Includes native libraries for the tree-sitter parsing library and language grammars.
 * Includes 28+ language grammars.
 * Work with all .NET languages such as C#, F#, and VB.NET.
-* Work with Windows (x86, x64, arm64), Linux (x64, arm64), and macOS (x64, arm64).
+* Work with Windows (x86, x64, arm64), Linux (x86, x64, arm, arm64), and macOS (x64, arm64).
 * Support for [predicates queries](https://github.com/tree-sitter/tree-sitter/issues/4075).
 * Passes the [WebAssembly bindings](https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_web) test suite.
 
@@ -66,10 +66,12 @@ The NuGet package includes all DLLs and shared objects for the supported platfor
 
 The NuGet package included pre-built native libraries for the following runtime identifier (RIDs):
 
-- win-x86
 - win-x64
+- win-x86
 - win-arm64
 - linux-x64
+- linux-x86
+- linux-arm
 - linux-arm64
 - osx-x64
 - osx-arm64
