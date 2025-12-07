@@ -15,11 +15,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - { rid: win-x86, os: windows-latest, configuration: Release, platform: x86 }
-          - { rid: win-x64, os: windows-latest, configuration: Release, platform: x64 }
-          - { rid: win-arm64, os: windows-latest, configuration: Release, platform: ARM64 }
+          - { rid: win-x64, os: windows-2025, configuration: Release, platform: x64 }
+          - { rid: win-x86, os: windows-2025, configuration: Release, platform: x86 }
+          - { rid: win-arm64, os: windows-2025, configuration: Release, platform: ARM64 }
           - { rid: linux-x64, os: ubuntu-22.04 }
-          - { rid: linux-arm64, os: ubuntu-22.04, packages: gcc-arm-linux-gnueabihf, cross-cc: arm-linux-gnueabihf-gcc }
+          - { rid: linux-x86, os: ubuntu-22.04, packages: gcc-i686-linux-gnu, cross-cc: i686-linux-gnu-gcc }
+          - { rid: linux-arm, os: ubuntu-22.04, packages: gcc-arm-linux-gnueabihf, cross-cc: arm-linux-gnueabihf-gcc }
+          - { rid: linux-arm64, os: ubuntu-22.04, packages: gcc-aarch64-linux-gnu, cross-cc: aarch64-linux-gnu-gcc }
           - { rid: osx-x64, os: macos-15-intel, configuration: Release }
           - { rid: osx-arm64, os: macos-latest, configuration: Release }
     runs-on: ${{ matrix.os }}
@@ -58,10 +60,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - { rid: win-x86, os: windows-latest }
-          - { rid: win-x64, os: windows-latest }
+          - { rid: win-x86, os: windows-2025 }
+          - { rid: win-x64, os: windows-2025 }
           - { rid: win-arm64, os: windows-11-arm }
-          - { rid: linux-x64, os: ubuntu-latest }
+          - { rid: linux-x64, os: ubuntu-24.04 }
+          - { rid: linux-arm64, os: ubuntu-24.04-arm }
           - { rid: osx-x64, os: macos-15-intel }
           - { rid: osx-arm64, os: macos-latest }
     runs-on: ${{ matrix.os }}
@@ -85,7 +88,7 @@ jobs:
         working-directory: tests
         run: dotnet test --runtime ${{ matrix.rid }} --logger:"console;verbosity=detailed" --environment TREESITTER_DEBUG_LOADER=1
   nuget:
-    runs-on: windows-latest
+    runs-on: windows-2025
     needs: tests
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -106,7 +109,7 @@ jobs:
           name: nuget-package
           path: src/bin/Release/*.nupkg
   release:
-    runs-on: windows-latest
+    runs-on: windows-2025
     needs: nuget
     if: github.ref_type == 'tag'
     env:
