@@ -14,6 +14,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -21,6 +22,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /I /Y /Q $(TargetPath) $(ProjectDir)..\build\runtimes\win-$(PlatformTarget.ToLower())\native\</Command>
