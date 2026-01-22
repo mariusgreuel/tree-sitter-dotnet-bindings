@@ -109,9 +109,35 @@ and the following projects:
 - [TypeScript grammar](https://github.com/tree-sitter/tree-sitter-typescript)
 - [SystemVerilog grammar](https://github.com/tree-sitter/tree-sitter-verilog)
 
+### Using your own language grammars
+
+To use your own language grammar, you need to first build the native language parser library
+for your grammer. Ensure that the native library is built for the platform and processor architecture
+you are targeting.
+
+You can then load the native library using the `Language(string library, string function)` constructor.
+
+Place the native library in your application's output folder and call the `Language` constructor with the library file name
+and the exported function name to load.
+
+Typically, the library name is of the form `tree-sitter-<language>.dll` and the exported function name is of the form `tree_sitter_<language>`,
+where `<language>` is the lower-case name of the programming language.
+
+For example, to create a `Language` instance for the native C language parser library named `tree-sitter-c.dll`, you can call:
+
+```csharp
+var language = new Language("tree-sitter-c.dll", "tree_sitter_c");
+```
+
+which is equivalent to:
+
+```csharp
+var language = new Language("C");
+```
+
 ## Development
 
-The tree-sitter .NET bindings consists of two projects:
+The tree-sitter .NET bindings package consists of two projects:
 
 - The tree-sitter .NET bindings
 - The native tree-sitter libraries
